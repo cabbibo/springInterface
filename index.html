@@ -1,0 +1,103 @@
+
+<html>
+<head>
+  
+<script src="/allSiteLib/jquery-1.7.1.min.js">          </script>
+<script src="/allSiteLib/leap.min.js">                  </script>
+<script src="/allSiteLib/stats.min.js">                 </script>
+<script src="/allSiteLib/underscore.js">                </script>
+<script src="/allSiteLib/math.js">                      </script>
+
+<script src="/allSiteLib/three.min.js">                 </script>
+<script src="/allSiteLib/OrbitControls.js">             </script>
+
+<script src = "threeInit.js">                           </script>
+<script src = "Mass.js">                                </script>
+<script src = "Spring.js">                              </script>
+<script src = "Apps.js">                                </script>
+
+
+
+<link rel="stylesheet" href="../allSiteLib/main.css"/>
+
+<style>
+
+  body{ background:#000; margin:0px;}
+
+</style>
+
+</head>
+<body>
+
+
+  <div id="container"></div>
+
+
+  <script>
+
+    // Scene Size
+    var SS = 1000;
+
+    var clock, controls, camera, scene, container, renderer, stats;
+
+    var massController , masses = [];
+
+    var springController , springs = [];
+
+    var theta = 0;
+
+
+    init();
+
+
+    function init(){
+
+
+      threeInit(SS);
+
+      light = new THREE.DirectionalLight( 0x04819E, 1 );
+      light.position.set( 0, 0, 1 );
+      scene.add( light );
+
+      light = new THREE.DirectionalLight( 0xFF1E00, 1 );
+      light.position.set( 0, 1, 0 );
+      scene.add( light );
+
+      light = new THREE.DirectionalLight( 0xFFB100, 1 );
+      light.position.set( 1, 0, 0 );
+      scene.add( light );
+
+      massController    = new MassController({
+       friction: .98 
+      });
+      springController  = new SpringController();
+
+      springController.createSprings({
+        type: "Test App",
+        flatten: true,
+      });
+      
+      start();
+
+    }
+    
+    
+    function update(){
+
+      // Applies forces
+      springController.update();
+
+      // Than moves forces
+      massController.update();
+
+    }
+
+
+
+  </script>
+
+</body>
+</html>
+
+
+

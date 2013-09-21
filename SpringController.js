@@ -15,7 +15,8 @@
     });
 
 
-    this.springs = [];
+    this.springs  = [];
+    this.masses   = [];
 
     // Making the two can communicate to each other
     this.massController = this.params.massController;
@@ -70,7 +71,7 @@
     */
     createSprings:function ( params ){
 
-      var opts = _.defaults( params || {}, {
+      var params = _.defaults( params || {}, {
 
         type:         "Test App",
         staticLength: this.params.staticLength,
@@ -79,7 +80,7 @@
 
       });
 
-      var type = opts.type;
+      var type = params.type;
 
       //First off get an array of all of the masses of this type
       var typeArray = [];
@@ -92,7 +93,7 @@
         console.log( m );
         //console.log(m.params.primaryCategory);
        
-        // TODO: Make this usable for not just 
+        // TODO: Make this usable for not just primary category 
         if( m.params.primaryCategory == type || m.params.secondaryCategory == type ){
           typeArray.push( m );
         }else if( m.params.secondaryCategory == type ){
@@ -114,6 +115,9 @@
         var k = m1.params.primaryCategory == type ? 3 : 2;
         console.log( 'K | ' + k );
 
+        // Makes our length a smaller so they cluster closer to the center
+        var l = params.staticLength / 10 ;
+
         // The First thing we do is attach our spring to the centerMass , 
         // So everything is being pulled towards the center
         var spring = new Spring({
@@ -121,34 +125,45 @@
           m1:           m1,
           m2:           this.centerMass,
           k:            k,
-          l:            opts.staticLength,
-          color:        opts.color,
+          l:            params.staticLength/2,
+          color:        params.color,
           //flatten:      opts.flatten
         });
 
 
         this.springs.push( spring );
 
-       for( var j = i; j < typeArray.length; j++ ){
+        for( var j = i; j < typeArray.length; j++ ){
+
+          var l = params.staticLength;
 
           var m2 = typeArray[j];
 
+          console.log( m1.params.primaryCategory );
+          console.log( m2.params.primaryCategory );
+
           // Strongest Connection
-          if( m1.primaryCategory == m2.primaryCategory ){
+          if( m1.params.primaryCategory == m2.params.primaryCategory ){
 
+            console.log( 'strong connection' );
+            l = params.staticLength /2 ;
             k = 3;
-
+           
           // Weaker Connection
           }else if( 
-            m1.primaryCategory == m2.secondaryCategory ||
-            m2.primaryCategory == m1.secondaryCategory )
+            m1.params.primaryCategory == m2.params.secondaryCategory ||
+            m2.params.primaryCategory == m1.params.secondaryCategory )
           {
-          
+         
+            console.log( 'mid connection' );
+            l = params.staticLength ;
             k = 2;
 
           // Weakest Connection
-          }else if( m1.secondaryCategory == m2.secondaryCategory ){
+          }else if( m1.params.secondaryCategory == m2.params.secondaryCategory ){
 
+            console.log( 'weak connection' );
+            l = params.staticLength * 2;
             k = 1;
 
           }else{
@@ -162,10 +177,9 @@
             m1:           m1,
             m2:           m2,
             k:            k,
-            l:            opts.staticLength,
+            l:            l,
             color:        0xaa0000,
-            flatten:      opts.flatten,
-            id:
+            flatten:      params.flatten,
           });
 
 
@@ -178,11 +192,41 @@
 
     },
 
+    flattenSpring: function( i ) {
 
-    destroyAllSprings = function(){
+      this.springs[i].makeFlat();
+
+    },
+
+
+    flattenAllSprings: function(){
+
+      for( var i = 0; i < this.springs.length; i ++ ){
+
+        this.flattenSpring( i );
+
+      }
+
+    },
+
+
+
+
+    destroyAllSprings:function(){
+
+      for( var i = 0; i < this.springs.length; i++ ){
+        this.springs[i].destroy();
+      }
 
       this.springs = [];
 
-    }
+    },
+
+
+    removeSpring: function( i ){
+
+      this.springs[ i ].destroy();
+
+    },
 
 }

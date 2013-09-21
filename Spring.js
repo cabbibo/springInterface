@@ -41,6 +41,11 @@
    
     scene.add( this.line );
 
+    // Makes sure we know the springs that each mass has
+    this.m1.springs.push( this );
+    this.m2.springs.push( this );
+
+
   }
 
 
@@ -91,17 +96,51 @@
       this.m2.totalForce.add( F );
 
       
+    },
+
+
+    destroy:function(){
+
+      // Removes the spring from the scene
+      scene.remove( this.line );
+
+      // Removes the spring from the controller
+      for( var  i =0; i < this.controller.springs.length; i++){
+
+        if( this.controller.springs[i] == this )
+          this.controller.springs.splice( i , 1 );
+        
+      }
+
+      // Removes the spring from m1
+      for( var i = 0;  i < this.m1.springs.length; i ++ ){
+  
+        if( this.m1.springs[i] == this )
+          this.m1.springs[i].splice( i , 1 );
+    
+      }
+
+      // Removes the spring from m2
+      for( var i = 0;  i < this.m2.springs.length; i ++ ){
+  
+        if( this.m2.springs[i] == this )
+          this.m2.springs[i].splice( i , 1 );
+    
+      }
+
+
+
+    },
+
+
+    makeFlat:function(){
+
+      this.flatten = true;
+
     }
 
   }
 
-
-       this.springs[i].update();
-
-    }
-
-
-  }
 
 
 

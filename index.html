@@ -13,6 +13,7 @@
 
 <script src = "threeInit.js">                           </script>
 <script src = "Mass.js">                                </script>
+<script src = "MassController.js">                      </script>
 <script src = "Spring.js">                              </script>
 <script src = "SpringController.js">                    </script>
 <script src = "Apps.js">                                </script>
@@ -74,8 +75,8 @@
       springController  = new SpringController();
 
       springController.createSprings({
-        type: "Test App",
-        flatten: true,
+        type: "Game",
+        //flatten: true,
       });
       
       start();

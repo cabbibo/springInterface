@@ -1,8 +1,8 @@
 
-  function Mass( params , controller){
+  function Mass( controller , params ){
 
     this.params = _.defaults( params || {}, {
-      image: "images/default.png",
+      image:          "images/default.png",     
     });
 
     this.controller   = controller;
@@ -24,6 +24,8 @@
 
     this.mesh         = new THREE.Mesh( this.geometry , this.material );
 
+    this.springs      = [];
+
     this.scene.add( this.mesh );
     scene.add( this.scene );
 
@@ -34,9 +36,9 @@
 
     randomPosition: function(){
 
-      this.position.x = Math.randomRange( SS/2 );
-      this.position.y = Math.randomRange( SS/2 );
-      this.position.z = Math.randomRange( SS/2 );
+      this.position.x = Math.randomRange( SS );
+      this.position.y = Math.randomRange( SS );
+      this.position.z = Math.randomRange( SS );
       this.updatePosition();
 
     },
@@ -74,6 +76,27 @@
 
     },
 
+    destroySprings: function(){
+
+      for( var i = 0; i < this.springs.length; i ++ ){
+
+        this.springs[i].destroy();
+
+      }
+
+    },
+
+    flattenAllSprings: function(){
+
+      for( var i = 0; i < this.springs.length; i ++ ){
+
+        this.springs[i].makeFlat();
+
+      }
+
+    },
+
+
 
     // TODO: Update this so it will always be infront of camera
     placeInFrontOfCamera: function(){
@@ -88,63 +111,3 @@
   }
 
 
-  function MassController( params  ){
-
-    this.params = _.defaults( params || {}, {
-      apps:           Apps,
-      friction:       .95,
-      flatten:        false,
-    });
-
-    this.apps     = this.params.apps;
-    this.friction = this.params.friction;
-
-    this.masses   = [];
-
-    
-    // Creates a massively heavy mass
-    this.centerMass = new Mass();
-    //this.centerMass.mass = 1000000000;
-    this.centerMass.mass = 1;
-
-    this.createMasses( this.apps );
-
-  }
-
-
-  MassController.prototype.createMasses = function(){
-
-
-    for( var i = 0; i < this.apps.length; i ++){
-
-      var mass = new Mass( this.apps[i] , this );
-      mass.randomPosition();
-      
-      this.masses.push( mass );
-
-    }
-
-  }
-
-  // Sets this mass as a center mass
-  // making it so that it has inifinte mass
-  // and will connect to all the objects of 
-  // current spring type
-  MassController.prototype.setCenterMass = function( type ){
-    
-    this.centerMass.placeInFrontOfCamera();
-
-  }
-  MassController.prototype.destroyMasses = function(){
-
-    this.masses = [];
-
-  }
-
-  MassController.prototype.update = function(){
-
-    for( var i = 0 ; i < this.masses.length; i++ ){
-      this.masses[i].update();
-    }
-
-  }

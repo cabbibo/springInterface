@@ -78,18 +78,38 @@
 
     },
 
-    getForce: function(){
+
+    getDistance: function(){
 
       var d = new THREE.Vector3();
-      d.subVectors( this.m1.position , this.m2.position );
+      d.subVectors( this.m1.position,  this.m2.position );
+
+      return d
+
+    },
+
+    getX: function( d ){
 
       var x = d.length() - this.l;
 
+      return x;
+
+
+    },
+
+
+    getForce: function(){
+
+      var d = this.getDistance(); 
+
+      var x = this.getX( d );
+
+
       // Get the with the proper direction
-      var F = d.normalize().multiplyScalar( x );
+      var F = d.normalize().multiplyScalar( x ).multiplyScalar( this.k );
 
       // Multiply by Spring Constant
-      F.multiplyScalar( this.k );
+     // F.multiplyScalar( this.k );
 
       return F;
 
@@ -113,6 +133,20 @@
       // Removes the spring from the scene
       scene.remove( this.line );
 
+
+      /*var F = this.getForce();
+
+      F.multiplyScalar( -500 );
+
+      this.applyForce();
+      console.log( this.getForce() );
+
+      this.m1.update();
+      this.m2.update();*/
+
+
+
+
       // Removes the spring from the controller
       for( var  i =0; i < this.controller.springs.length; i++){
 
@@ -122,19 +156,14 @@
       }
 
  
-      //var F = this.getForce();
-
-      //F.multiplyScalar( -500 );
-
-      //this.applyForce();
-      //console.log( this.getForce() );
-
-
       // Removes the spring from m1
       for( var i = 0;  i < this.m1.springs.length; i ++ ){
  
-        if( this.m1.springs[i] == this )
+        if( this.m1.springs[i] == this ){
+          console.log('ds');
           this.m1.springs.splice( i , 1 );
+  
+        }
     
       }
 

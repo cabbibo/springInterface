@@ -86,19 +86,30 @@
 
       return d
 
-    }
+    },
+
+    getX: function( d ){
+
+      var x = d.length() - this.l;
+
+      return x;
+
+
+    },
+
 
     getForce: function(){
 
       var d = this.getDistance(); 
 
-      var x = d.length() - this.l;
+      var x = this.getX( d );
+
 
       // Get the with the proper direction
-      var F = d.normalize().multiplyScalar( x );
+      var F = d.normalize().multiplyScalar( x ).multiplyScalar( this.k );
 
       // Multiply by Spring Constant
-      F.multiplyScalar( this.k );
+     // F.multiplyScalar( this.k );
 
       return F;
 

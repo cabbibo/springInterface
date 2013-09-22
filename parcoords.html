@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+  
+<script src="lib/jquery-1.7.1.min.js">                  </script>
+<script src="lib/leap.min.js">                          </script>
+<script src="lib/stats.min.js">                         </script>
+<script src="lib/underscore.js">                        </script>
+<script src="lib/math.js">                              </script>
+
+<script src="lib/three.min.js">                         </script>
+<script src="lib/OrbitControls.js">                     </script>
+
+<script src="lib/d3.v3.min.js">                            </script>
+<script src="lib/d3.parcoords.js">                     </script>
+
+<script src = "threeInit.js">                           </script>
+<script src = "Mass.js">                                </script>
+<script src = "MassController.js">                      </script>
+<script src = "Spring.js">                              </script>
+<script src = "SpringController.js">                    </script>
+<script src = "Apps.js">                                </script>
+
+<link rel="stylesheet" href="lib/d3.parcoords.css"/>
+
+<style>
+
+  body{ background:#000; margin:0px;}
+  #parcoords {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 80%;
+    height: 220px;
+  }
+  .parcoords text {
+    fill: rgba(255,255,255,0.3);
+  }
+  .parcoords .axis line, .parcoords .axis path {
+    stroke: rgba(255,255,255,0.3);
+  }
+
+</style>
+
+</head>
+<body>
+
+
+  <div id="container"></div>
+  <div id="parcoords" class="parcoords"></div>
+
+
+  <script>
+
+    // Scene Size
+    var SS = 1000;
+
+    var clock, controls, camera, scene, container, renderer, stats;
+
+    var massController , masses = [];
+
+    var springController , springs = [];
+
+    var theta = 0;
+
+    // Parallel coordinates
+    var parcoords = d3.parcoords()("#parcoords")
+      .color("rgba(200,50,30,0.2)");
+
+
+    init();
+
+
+    function init(){
+
+
+      threeInit(SS);
+
+      light = new THREE.DirectionalLight( 0x04819E, 1 );
+      light.position.set( 0, 0, 1 );
+      scene.add( light );
+
+      light = new THREE.DirectionalLight( 0xFF1E00, 1 );
+      light.position.set( 0, 1, 0 );
+      scene.add( light );
+
+      light = new THREE.DirectionalLight( 0xFFB100, 1 );
+      light.position.set( 1, 0, 0 );
+      scene.add( light );
+
+      massController    = new MassController({
+       friction: .98 
+      });
+      springController  = new SpringController();
+
+      springController.createSprings({
+        type: "Game",
+        //flatten: true,
+      });
+      
+      start();
+
+    }
+    
+    
+    function update(){
+
+      // Applies forces
+      springController.update();
+
+      // Than moves forces
+      massController.update();
+
+      springs = springController.springs.map(function(d) {
+        var F = d.getForce();
+        var totalF = Math.sqrt(F.x*F.x+F.y*F.y+F.z*F.z);
+        return {
+          k: d.k,
+          l: d.l,
+          x1: d.m1.position.x,
+          y1: d.m1.position.y,
+          z1: d.m1.position.z,
+          x2: d.m2.position.x,
+          y2: d.m2.position.y,
+          z2: d.m2.position.z,
+          Fx: F.x,
+          Fy: F.y,
+          Fz: F.z,
+          totalF: totalF
+        };
+      });
+
+      parcoords.data(springs)
+      .autoscale()
+      .render()
+      .createAxes();
+    }
+
+
+
+  </script>
+
+</body>
+</html>
+
+
+

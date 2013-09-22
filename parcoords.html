@@ -25,31 +25,37 @@
 <link rel="stylesheet" href="lib/d3.parcoords.css"/>
 
 <style>
-
-  body{ background:#000; margin:0px;}
+  body{
+    background:#000;
+    margin:0px;
+    overflow: hidden;
+  }
   #parcoords {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 220px;
+    height: 135px;
+    background: rgba(0,0,0,0.8);
   }
   .parcoords text {
-    fill: rgba(255,255,255,0.3);
+    fill: rgba(255,255,255,0.35);
+    font-size: 9px;
   }
   .parcoords .axis line, .parcoords .axis path {
-    stroke: rgba(255,255,255,0.3);
+    stroke: rgba(125,125,125,0.22);
+    shape-rendering: default;
+    stroke-width: 1px;
+  }
+  .parcoords .axis text {
   }
 
 </style>
 
 </head>
 <body>
-
-
-  <div id="container"></div>
   <div id="parcoords" class="parcoords"></div>
-
+  <div id="container"></div>
 
   <script>
 
@@ -67,12 +73,13 @@
     // Parallel coordinates
     var color = function(d) {
       // color by total force
-      var r = Math.round(255*d.totalF/500);
-      var b = Math.round(95*(1-d.totalF/500));
-      if (r > 255) r = 255;
-      if (b < 0) b = 0;
-      return "rgba(" + r + ",50," + b +",0.3)";
+      var red = 55+Math.round(200*d.totalF/500);
+      var alpha = 0.2+d.totalF/3000;
+      if (red > 255) red = 255;
+      if (alpha > 1) alpha = 1;
+      return "rgba(" + red + ",35,35," + alpha + ")";
     };
+
     var parcoords = d3.parcoords()("#parcoords")
       .color(color);
 
@@ -97,7 +104,7 @@
       scene.add( light );
 
       massController    = new MassController({
-       friction: .98 
+       friction: .75 
       });
       springController  = new SpringController();
 
@@ -111,6 +118,7 @@
     }
     
     
+    var frame = 0;
     function update(){
 
       // Applies forces
@@ -125,29 +133,31 @@
         return {
           k: d.k,
           l: d.l,
+          totalF: totalF,
           x1: d.m1.position.x,
-          y1: d.m1.position.y,
-          z1: d.m1.position.z,
-          x2: d.m2.position.x,
-          y2: d.m2.position.y,
-          z2: d.m2.position.z,
           vx1: d.m1.velocity.x,
-          vy1: d.m1.velocity.y,
-          vz1: d.m1.velocity.z,
-          vx2: d.m2.velocity.x,
-          vy2: d.m2.velocity.y,
-          vz2: d.m2.velocity.z,
           Fx: F.x,
+          vx2: d.m2.velocity.x,
+          x2: d.m2.position.x,
+          y1: d.m1.position.y,
+          vy1: d.m1.velocity.y,
           Fy: F.y,
+          vy2: d.m2.velocity.y,
+          y2: d.m2.position.y,
+          z1: d.m1.position.z,
+          vz1: d.m1.velocity.z,
           Fz: F.z,
-          totalF: totalF
+          vz2: d.m2.velocity.z,
+          z2: d.m2.position.z,
         };
       });
 
       parcoords.data(springs)
-      .autoscale()
-      .render()
-      .createAxes();
+        .autoscale()
+        .render();
+
+      if (frame % 3 == 0) parcoords.createAxes(); // update axes periodically
+      frame++;
     }
 
 

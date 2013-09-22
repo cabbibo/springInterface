@@ -78,8 +78,7 @@
 
     },
 
-    // Hooke's law !
-    applyForce:function(){
+    getForce: function(){
 
       var d = new THREE.Vector3();
       d.subVectors( this.m1.position , this.m2.position );
@@ -91,6 +90,16 @@
 
       // Multiply by Spring Constant
       F.multiplyScalar( this.k );
+
+      return F;
+
+
+    },
+
+    // Hooke's law !
+    applyForce:function(){
+
+      F = this.getForce();
 
       this.m1.totalForce.sub( F );
       this.m2.totalForce.add( F );
@@ -112,11 +121,20 @@
         
       }
 
+ 
+      //var F = this.getForce();
+
+      //F.multiplyScalar( -500 );
+
+      //this.applyForce();
+      //console.log( this.getForce() );
+
+
       // Removes the spring from m1
       for( var i = 0;  i < this.m1.springs.length; i ++ ){
-  
+ 
         if( this.m1.springs[i] == this )
-          this.m1.springs[i].splice( i , 1 );
+          this.m1.springs.splice( i , 1 );
     
       }
 
@@ -124,7 +142,7 @@
       for( var i = 0;  i < this.m2.springs.length; i ++ ){
   
         if( this.m2.springs[i] == this )
-          this.m2.springs[i].splice( i , 1 );
+          this.m2.springs.splice( i , 1 );
     
       }
 

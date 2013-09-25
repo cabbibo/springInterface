@@ -1,10 +1,11 @@
 function threeInit( SceneSize ){
+  
   clock = new THREE.Clock();
 
-  camera = new THREE.PerspectiveCamera( 50 , window.innerWidth / window.innerHeight , SS / 1000 , SS * 5 );
+  camera = new THREE.PerspectiveCamera( 80 , window.innerWidth / window.innerHeight , SS / 100 , SS * 50 );
   camera.position.z = SceneSize;
 
-  controls = new THREE.OrbitControls( camera );
+  controls = new THREE.PaddleControls( camera );
 
   scene = new THREE.Scene();
 

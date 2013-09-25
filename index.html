@@ -10,6 +10,7 @@
 
 <script src="lib/three.min.js">                         </script>
 <script src="lib/OrbitControls.js">                     </script>
+<script src="lib/PaddleControls.js">                    </script>
 
 <script src = "threeInit.js">                           </script>
 <script src = "Mass.js">                                </script>
@@ -17,6 +18,7 @@
 <script src = "Spring.js">                              </script>
 <script src = "SpringController.js">                    </script>
 <script src = "Apps.js">                                </script>
+<script src = "loop.js">                                </script>
 
 
 
@@ -41,6 +43,9 @@
     var SS = 1000;
 
     var clock, controls, camera, scene, container, renderer, stats;
+
+
+    var fingerMarker;
 
     var massController , masses = [];
 
@@ -74,12 +79,22 @@
       });
       springController  = new SpringController();
 
-      springController.createSprings({
+      /*springController.createSprings({
         type: "Game",
-        //flatten: true,
-      });
-      
+        flatten: true,
+      });*/
+
+
+      fingerMarker = new THREE.Mesh( 
+        new THREE.SphereGeometry( SS / 20 ), 
+        new THREE.MeshNormalMaterial()
+      );
+
+      scene.add( fingerMarker );
+
       start();
+
+      controller.connect();
 
     }
     
@@ -93,7 +108,6 @@
       massController.update();
 
     }
-
 
 
   </script>

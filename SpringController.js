@@ -89,10 +89,6 @@
         
         var m = this.masses[i];
 
-        //console.log( type );
-        console.log( m );
-        //console.log(m.params.primaryCategory);
-       
         // TODO: Make this usable for not just primary category 
         if( m.params.primaryCategory == type || m.params.secondaryCategory == type ){
           typeArray.push( m );
@@ -108,12 +104,10 @@
 
       for( var i = 0; i < typeArray.length; i++ ){
 
-        console.log('a');
         var m1 = typeArray[i];
 
         // should test to see if it is primary or secondary
         var k = m1.params.primaryCategory == type ? 3 : 2;
-        console.log( 'K | ' + k );
 
         // Makes our length a smaller so they cluster closer to the center
         var l = params.staticLength / 10 ;
@@ -139,14 +133,10 @@
 
           var m2 = typeArray[j];
 
-          console.log( m1.params.primaryCategory );
-          console.log( m2.params.primaryCategory );
-
           // Strongest Connection
           if( m1.params.primaryCategory == m2.params.primaryCategory ){
 
-            console.log( 'strong connection' );
-            l = params.staticLength /2 ;
+            l = params.staticLength;
             k = 3;
            
           // Weaker Connection
@@ -155,15 +145,13 @@
             m2.params.primaryCategory == m1.params.secondaryCategory )
           {
          
-            console.log( 'mid connection' );
-            l = params.staticLength ;
+            l = params.staticLength * 2;
             k = 2;
 
           // Weakest Connection
           }else if( m1.params.secondaryCategory == m2.params.secondaryCategory ){
 
-            console.log( 'weak connection' );
-            l = params.staticLength * 2;
+            l = params.staticLength * 3;
             k = 1;
 
           }else{
@@ -214,11 +202,20 @@
 
     destroyAllSprings:function(){
 
+      // Creates a temporary array of all the springs
+      // so we can loop through it instead of our spring array
+      // TODO: Figure out if this is the right way to do it
+      var tempArray = [];
+
       for( var i = 0; i < this.springs.length; i++ ){
-        this.springs[i].destroy();
+        tempArray.push( this.springs[i] );
       }
 
-      this.springs = [];
+      for( var i = 0; i < tempArray.length; i++ ){
+        tempArray[i].destroy();
+      }
+
+      //this.springs = [];
 
     },
 
@@ -228,5 +225,19 @@
       this.springs[ i ].destroy();
 
     },
+
+
+    // Checks for cut springs by seen if they have been crossed
+    checkCutSprings: function( pos , oPos ){
+
+      for( var i = 0 ; i < this.springs.length; i ++){
+
+        this.springs[i].checkIfCut( pos , oPos );
+
+      }
+
+    }
+
+
 
 }

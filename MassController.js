@@ -2,7 +2,7 @@
 
     this.params = _.defaults( params || {}, {
       apps:           Apps,
-      friction:       .95,
+      friction:       .9,
       flatten:        false,
     });
 
@@ -31,7 +31,7 @@
       for( var i = 0; i < this.apps.length; i ++){
 
         var mass = new Mass( this , this.apps[i]  );
-        mass.randomPosition();
+        mass.randomPosition( SS * 4 );
         
         this.masses.push( mass );
 

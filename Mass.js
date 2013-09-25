@@ -34,11 +34,11 @@
 
   Mass.prototype = {
 
-    randomPosition: function(){
+    randomPosition: function( size ){
 
-      this.position.x = Math.randomRange( SS );
-      this.position.y = Math.randomRange( SS );
-      this.position.z = Math.randomRange( SS );
+      this.position.x = Math.randomRange( size );
+      this.position.y = Math.randomRange( size );
+      this.position.z = Math.randomRange( size );
       this.updatePosition();
 
     },
@@ -101,9 +101,11 @@
     // TODO: Update this so it will always be infront of camera
     placeInFrontOfCamera: function(){
 
-      this.position.x = 0;
-      this.position.y = 0;
-      this.position.z = 0;
+      this.position.x = camera.position.x;
+      this.position.y = camera.position.y;
+      this.position.z = camera.position.z - SS /2;
+
+      this.updatePosition();
 
     }
 

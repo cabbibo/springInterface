@@ -1,5 +1,6 @@
 
- 
+
+var springId = 0;
   /*
   
      CONSTRUCTOR
@@ -7,6 +8,9 @@
   */
 
   function Spring( params ){
+
+    this.id = springId;
+    springId ++;
 
     this.params = _.defaults( params || {}, {
    
@@ -132,48 +136,29 @@
 
       // Removes the spring from the scene
       scene.remove( this.line );
+      
 
+      // Faking a massive spring getting cut
+      var F = this.getForce();
 
-      /*var F = this.getForce();
+      F.multiplyScalar( -50 );
 
-      F.multiplyScalar( -500 );
-
-      this.applyForce();
-      console.log( this.getForce() );
+      this.m1.totalForce = F;
+      this.m2.totalForce = F;
 
       this.m1.update();
-      this.m2.update();*/
+      this.m2.update();
 
 
 
+      var i = this.controller.springs.indexOf( this );
+      this.controller.springs.splice( i , 1 );
 
-      // Removes the spring from the controller
-      for( var  i =0; i < this.controller.springs.length; i++){
+      var i = this.m1.springs.indexOf( this );
+      this.m1.springs.splice( i , 1 );
 
-        if( this.controller.springs[i] == this )
-          this.controller.springs.splice( i , 1 );
-        
-      }
-
- 
-      // Removes the spring from m1
-      for( var i = 0;  i < this.m1.springs.length; i ++ ){
- 
-        if( this.m1.springs[i] == this ){
-          console.log('ds');
-          this.m1.springs.splice( i , 1 );
-  
-        }
-    
-      }
-
-      // Removes the spring from m2
-      for( var i = 0;  i < this.m2.springs.length; i ++ ){
-  
-        if( this.m2.springs[i] == this )
-          this.m2.springs.splice( i , 1 );
-    
-      }
+      var i = this.m2.springs.indexOf( this );
+      this.m2.springs.splice( i , 1 );
 
 
 
@@ -183,6 +168,36 @@
     makeFlat:function(){
 
       this.flatten = true;
+
+    },
+
+
+
+
+    // Checks to see if this spring has been cut
+    checkIfCut: function( pos , oPos ){
+
+
+      var dif1 = new THREE.Vector3().subVectors( 
+        this.geometry.vertices[1],
+        this.geometry.vertices[0]
+      );
+
+      var dif2 = dif1.clone();
+
+      var dot1 = dif1.dot( pos );
+      var dot2 = dif2.dot( oPos );
+
+      //console.log( dot1 + " , " + dot2 );
+
+      var sign1 = dot1 > 0;
+      var sign2 = dot2 > 0;
+
+      var dif  =  sign1 && !sign2;
+      var dif2 = !sign1 &&  sign2;
+
+      if( dif || dif2 )
+        this.destroy();
 
     }
 

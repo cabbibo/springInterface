@@ -103,7 +103,7 @@
 
       this.position.x = camera.position.x;
       this.position.y = camera.position.y;
-      this.position.z = camera.position.z - SS /2;
+      this.position.z = camera.position.z - SS;
 
       this.updatePosition();
 

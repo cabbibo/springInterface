@@ -74,9 +74,10 @@
       var params = _.defaults( params || {}, {
 
         type:         "Test App",
-        staticLength: this.params.staticLength,
-        color:        this.params.springColor,
-        flatten:      this.params.flatten
+        staticLength: params.staticLength,
+        color:        params.springColor,
+        flatten:      params.flatten,
+        position:     params.position
 
       });
 
